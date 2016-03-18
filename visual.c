@@ -4,6 +4,9 @@
 
 #include "SDL.h"
 
+#define WIDTH 640
+#define HEIGHT 480
+
 SDL_Surface *screen;
 
 Uint32 *buf;
@@ -36,12 +39,12 @@ void loop (void)
 		if (SDL_MUSTLOCK(screen)) 
 			if (SDL_LockSurface(screen) < 0) 
 				return;
-		fread (screen->pixels, sizeof (Uint32), 1024*768, f);
+		fread (screen->pixels, sizeof (Uint32), WIDTH*HEIGHT, f);
 		if (SDL_MUSTLOCK(screen)) 
 			SDL_UnlockSurface(screen);
-		b += 1024 * sizeof (Uint32);
+		b += WIDTH * sizeof (Uint32);
 		
-		SDL_UpdateRect(screen, 0, 0, 1024, 768);
+		SDL_UpdateRect(screen, 0, 0, WIDTH, HEIGHT);
 	}
 }
 
@@ -54,10 +57,10 @@ int main (int argc, char *argv[])
 	
 	atexit (SDL_Quit);
 	
-	screen = SDL_SetVideoMode (1024, 768, 32, SDL_SWSURFACE);
+	screen = SDL_SetVideoMode (WIDTH, HEIGHT, 32, SDL_SWSURFACE);
 	assert (screen);
 	
-	buf = malloc (1024 * 768 * sizeof (Uint32));
+	buf = malloc (WIDTH * HEIGHT * sizeof (Uint32));
 	
 	f = fopen ("data.bin", "r");
 	loop();
