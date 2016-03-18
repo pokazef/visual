@@ -12,25 +12,25 @@ FILE *f;
 
 void loop (void)
 {
-    SDL_Event event;
+	SDL_Event event;
 	int done = 0;
 	int a, b = 0;
 
 	while (! done)
 	{
-    	while (SDL_PollEvent (&event)) {
-        	switch (event.type) {
-        	case SDL_KEYDOWN:
-            	if (event.key.keysym.sym == SDLK_ESCAPE
+		while (SDL_PollEvent (&event)) {
+			switch (event.type) {
+			case SDL_KEYDOWN:
+				if (event.key.keysym.sym == SDLK_ESCAPE
 				 || event.key.keysym.sym == 'q') {
-                	done = 1;
-            	}
-            	break;
-        	case SDL_QUIT:
-            	done = 1;
-            	break;
-        	}
-    	}
+					done = 1;
+				}
+				break;
+			case SDL_QUIT:
+				done = 1;
+				break;
+			}
+		}
 
 		fseek (f, b, SEEK_SET);
 		if (SDL_MUSTLOCK(screen)) 
