@@ -4,9 +4,7 @@
 
 #include "SDL.h"
 
-SDL_Window *win;
-SDL_Renderer *ctx;
-SDL_Texture *tex;	
+SDL_Surface *screen;
 
 Uint32 *buf;
 
@@ -35,44 +33,32 @@ void loop (void)
     	}
 
 		fseek (f, b, SEEK_SET);
-		fread (buf, sizeof (Uint32), 1024*768, f);
+		if (SDL_MUSTLOCK(screen)) 
+			if (SDL_LockSurface(screen) < 0) 
+				return;
+		fread (screen->pixels, sizeof (Uint32), 1024*768, f);
+		if (SDL_MUSTLOCK(screen)) 
+			SDL_UnlockSurface(screen);
 		b += 1024 * sizeof (Uint32);
 		
-		SDL_UpdateTexture (tex, NULL, buf, 1024 * sizeof (Uint32));
-		SDL_RenderClear (ctx);
-		SDL_RenderCopy (ctx, tex, NULL, NULL);
-		SDL_RenderPresent (ctx);
+		SDL_UpdateRect(screen, 0, 0, 1024, 768);
 	}
 }
 
 int main (int argc, char *argv[])
 {
-	win = SDL_CreateWindow
-	(
-		"visual",
-		SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED,
-		1024, 768,
-		0 //SDL_WINDOW_FULLSCREEN | SDL_WINDOW_OPENGL
-	);
-	assert (win);
+	int res;
 	
-	ctx = SDL_CreateRenderer (win, -1, 0 /*SDL_RENDERER_PRESENTVSYNC*/);
-	assert (ctx);
+	res = SDL_Init (SDL_INIT_VIDEO);
+	assert (res >= 0);
 	
-	tex = SDL_CreateTexture
-	(
-		ctx,
-		SDL_PIXELFORMAT_ARGB8888,
-		SDL_TEXTUREACCESS_STREAMING,
-		1024, 768
-	);
-	assert (tex);
+	atexit (SDL_Quit);
+	
+	screen = SDL_SetVideoMode (1024, 768, 32, SDL_SWSURFACE);
+	assert (screen);
 	
 	buf = malloc (1024 * 768 * sizeof (Uint32));
 	
 	f = fopen ("data.bin", "r");
 	loop();
-	
-	SDL_Quit();
 }
