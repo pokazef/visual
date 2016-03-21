@@ -47,6 +47,10 @@ int main (int argc, char *argv[])
 {
 	int res;
 	
+	assert (argc == 2);
+
+	f = fopen (argv[1], "r");
+
 	res = SDL_Init (SDL_INIT_VIDEO);
 	assert (res >= 0);
 	
@@ -58,7 +62,6 @@ int main (int argc, char *argv[])
 	SDL_ShowCursor (SDL_DISABLE);
 
 	buf = malloc (WIDTH * HEIGHT * sizeof (Uint32));
-	
-	f = fopen ("data.bin", "r");
+
 	loop();
 }
