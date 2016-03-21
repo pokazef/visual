@@ -13,6 +13,9 @@ Uint32 *buf;
 
 FILE *f;
 
+int move_x = 0;
+int move_y = 0;
+
 void loop (void)
 {
 	SDL_Event event;
@@ -24,9 +27,64 @@ void loop (void)
 		while (SDL_PollEvent (&event)) {
 			switch (event.type) {
 			case SDL_KEYDOWN:
-				if (event.key.keysym.sym == SDLK_ESCAPE
-				 || event.key.keysym.sym == 'q') {
-					done = 1;
+				switch (event.key.keysym.sym)
+				{
+					case SDLK_ESCAPE:
+					case 'q':
+						done = 1;
+					break;
+
+					case SDLK_UP:
+						move_y-=1;
+					break;
+
+					case SDLK_DOWN:
+						move_y+=1;
+					break;
+
+					case SDLK_LEFT:
+						move_x-=1;
+					break;
+
+					case SDLK_RIGHT:
+						move_x+=1;
+					break;
+
+					case SDLK_PAGEUP:
+						move_y-=10;
+					break;
+
+					case SDLK_PAGEDOWN:
+						move_y+=10;
+					break;
+				}
+				break;
+			case SDL_KEYUP:
+				switch (event.key.keysym.sym)
+				{
+					case SDLK_UP:
+						move_y+=1;
+					break;
+
+					case SDLK_DOWN:
+						move_y-=1;
+					break;
+
+					case SDLK_LEFT:
+						move_x+=1;
+					break;
+
+					case SDLK_RIGHT:
+						move_x-=1;
+					break;
+
+					case SDLK_PAGEUP:
+						move_y+=10;
+					break;
+
+					case SDLK_PAGEDOWN:
+						move_y-=10;
+					break;
 				}
 				break;
 			case SDL_QUIT:
@@ -37,7 +95,8 @@ void loop (void)
 
 		fseek (f, b, SEEK_SET);
 		fread (screen->pixels, sizeof (Uint32), WIDTH*HEIGHT, f);
-		b += WIDTH * sizeof (Uint32);
+		b += move_x * 4 + move_y * WIDTH * sizeof (Uint32); // FIXME: 64-bit arithmetic
+		if (b < 0) b = 0;
 		
 		SDL_UpdateRect(screen, 0, 0, WIDTH, HEIGHT);
 	}
