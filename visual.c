@@ -117,7 +117,7 @@ void loop (void)
 
 		for (a = -HEIGHT/2; a < HEIGHT/2; a++)
 		{
-			res = fseek (f, map(a)*WIDTH*4, SEEK_SET);
+			res = fseeko (f, map(a)*WIDTH*4, SEEK_SET);
 			if (res == 0)
 				res = fread (screen->pixels + (a+HEIGHT/2)*WIDTH*4, 4, WIDTH, f);
 			if (res <= 0)
