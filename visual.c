@@ -115,7 +115,7 @@ int main (int argc, char *argv[])
 	
 	atexit (SDL_Quit);
 	
-	screen = SDL_SetVideoMode (WIDTH, HEIGHT, 32, SDL_SWSURFACE);
+	screen = SDL_SetVideoMode (WIDTH, HEIGHT, 32, SDL_HWSURFACE);
 	assert (screen);
 	
 	SDL_ShowCursor (SDL_DISABLE);
