@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <strings.h>
 
 #include "SDL.h"
 
@@ -14,12 +15,25 @@ FILE *f;
 
 int move_x = 0;
 int move_y = 0;
+int zoom = 1;
+
+int base = 0;
+
+long long map (int line)
+{
+	int res;
+	
+	res = base + line * zoom;
+	
+	return res;
+}
 
 void loop (void)
 {
 	SDL_Event event;
 	int done = 0;
-	int a, b = 0;
+	long long a, b = 0;
+	int res;
 
 	while (! done)
 	{
@@ -55,6 +69,15 @@ void loop (void)
 
 					case SDLK_PAGEDOWN:
 						move_y+=10;
+					break;
+					
+					case 'a':
+						zoom = zoom * 2;
+					break;
+
+					case 'z':
+						zoom = zoom / 2;
+						if (zoom == 0) zoom = 1;
 					break;
 				}
 				break;
@@ -92,12 +115,17 @@ void loop (void)
 			}
 		}
 
-		fseek (f, b, SEEK_SET);
-		fread (screen->pixels, sizeof (Uint32), WIDTH*HEIGHT, f);
-		b += move_x * 4 + move_y * WIDTH * sizeof (Uint32); // FIXME: 64-bit arithmetic
-		if (b < 0) b = 0;
+		for (a = -HEIGHT/2; a < HEIGHT/2; a++)
+		{
+			res = fseek (f, map(a)*WIDTH*4, SEEK_SET);
+			if (res == 0)
+				res = fread (screen->pixels + (a+HEIGHT/2)*WIDTH*4, 4, WIDTH, f);
+			if (res <= 0)
+				memset (screen->pixels + (a+HEIGHT/2)*WIDTH*4, 0x20, WIDTH*4);
+		}
+		base += move_y * zoom;
 		
-		SDL_UpdateRect(screen, 0, 0, WIDTH, HEIGHT);
+		SDL_UpdateRect (screen, 0, 0, WIDTH, HEIGHT);
 	}
 }
 
