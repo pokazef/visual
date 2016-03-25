@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <assert.h>
 
 #include "SDL.h"
 
@@ -102,21 +101,28 @@ void loop (void)
 	}
 }
 
+void bail (char *msg)
+{
+	puts (msg);
+	exit (1);
+}
+
 int main (int argc, char *argv[])
 {
 	int res;
 	
-	assert (argc == 2);
+	if (argc < 2) bail ("Not enough arguments");
 
 	f = fopen (argv[1], "r");
+	if (! f) bail ("Couldn't open file");
 
 	res = SDL_Init (SDL_INIT_VIDEO);
-	assert (res >= 0);
+	if (res < 0) bail ("SDL_Init");
 	
 	atexit (SDL_Quit);
 	
 	screen = SDL_SetVideoMode (WIDTH, HEIGHT, 32, SDL_HWSURFACE);
-	assert (screen);
+	if (! screen) bail ("SDL_SetVideoMode");
 	
 	SDL_ShowCursor (SDL_DISABLE);
 
