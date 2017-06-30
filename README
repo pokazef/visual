@@ -1,0 +1,19 @@
+This is a binary data viewer based on SDL.
+
+You can think of it as a sort of hexadecimal viewer (like hexedit)
+but with a one-pixel font.
+
+It allows you to zoom out, so it can be used to view entire hard-disk
+partitions. It refreshes its display in real time, so you can watch
+how files are written inside a file system, for example.
+
+Example: ./visual /dev/sda
+
+Keys:
+   'a': zoom out
+   'z': zoom in
+    UP: scroll up slowly
+  DOWN: scroll down slowly
+  PGUP: scroll up fast
+PGDOWN: scroll down fast
+   'q': quit
